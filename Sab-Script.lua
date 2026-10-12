@@ -5,6 +5,7 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 
 local localPlayer = Players.LocalPlayer
 local playerGui = localPlayer:WaitForChild("PlayerGui")
@@ -23,8 +24,8 @@ screenGui.Parent = playerGui
 -- Fenêtre
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 450, 0, 300)
-mainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
+mainFrame.Size = UDim2.new(0, 450, 0, 320)
+mainFrame.Position = UDim2.new(0.5, -225, 0.5, -160)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
@@ -57,9 +58,9 @@ local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(1, -20, 1, 0)
 titleLabel.Position = UDim2.new(0, 10, 0, 0)
 titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "Menu Principal"
+titleLabel.Text = "Sab Script - Steal a Brainrot"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.TextSize = 16
+titleLabel.TextSize = 15
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 titleLabel.Parent = topBar
@@ -88,7 +89,7 @@ mainPage.Name = "MainPage"
 mainPage.Size = UDim2.new(1, 0, 1, 0)
 mainPage.BackgroundTransparency = 1
 mainPage.Visible = true
-mainPage.CanvasSize = UDim2.new(0, 0, 0, 0)
+mainPage.CanvasSize = UDim2.new(0, 0, 0, 120)
 mainPage.ScrollBarThickness = 4
 mainPage.Parent = pagesContainer
 
@@ -122,7 +123,9 @@ end
 createTabButton("Main", "Main", 1)
 createTabButton("Settings", "Settings", 2)
 
--- Bouton ESP
+----------------------------------------------------
+-- BOUTON ESP JOUEURS
+----------------------------------------------------
 local espEnabled = false
 
 local espButton = Instance.new("TextButton")
@@ -235,19 +238,96 @@ for _, player in ipairs(Players:GetPlayers()) do
 	end)
 end
 
--- Page Settings
+----------------------------------------------------
+-- BOUTON TP AU BEST BRAINROT
+----------------------------------------------------
+local tpBrainrotButton = Instance.new("TextButton")
+tpBrainrotButton.Size = UDim2.new(0, 280, 0, 45)
+tpBrainrotButton.Position = UDim2.new(0, 15, 0, 70)
+tpBrainrotButton.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+tpBrainrotButton.BorderSizePixel = 0
+tpBrainrotButton.AutoButtonColor = true
+tpBrainrotButton.Parent = mainPage
+
+local tpBtnCorner = Instance.new("UICorner")
+tpBtnCorner.CornerRadius = UDim.new(0, 6)
+tpBtnCorner.Parent = tpBrainrotButton
+
+local tpLabel = Instance.new("TextLabel")
+tpLabel.Size = UDim2.new(1, -20, 1, 0)
+tpLabel.Position = UDim2.new(0, 15, 0, 0)
+tpLabel.BackgroundTransparency = 1
+tpLabel.Text = "⚡ TP Best Brainrot"
+tpLabel.TextColor3 = Color3.fromRGB(0, 255, 128)
+tpLabel.TextSize = 14
+tpLabel.Font = Enum.Font.GothamBold
+tpLabel.TextXAlignment = Enum.TextXAlignment.Left
+tpLabel.Parent = tpBrainrotButton
+
+tpBrainrotButton.MouseButton1Click:Connect(function()
+	local character = localPlayer.Character
+	if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+	
+	local bestTarget = nil
+	local highestValue = -1
+
+	-- Recherche dans Workspace des éléments potentiels de Brainrot (selon les structures courantes du jeu)
+	for _, obj in ipairs(Workspace:GetDescendants()) do
+		if obj:IsA("Model") and (obj.Name:lower():find("brainrot") or obj:FindFirstChild("Humanoid")) then
+			-- Tentative de détection d'une valeur ou d'un prix/rareté dans les attributs ou enfants
+			local val = obj:GetAttribute("Value") or obj:GetAttribute("Price") or 0
+			if val > highestValue then
+				highestValue = val
+				if obj.PrimaryPart then
+					bestTarget = obj.PrimaryPart
+				elseif obj:FindFirstChild("HumanoidRootPart") then
+					bestTarget = obj.HumanoidRootPart
+				elseif obj:FindFirstChildWhichIsA("BasePart") then
+					bestTarget = obj:FindFirstChildWhichIsA("BasePart")
+				end
+			end
+		end
+	end
+
+	-- Si aucun n'a d'attribut spécifique, prend le premier modèle Brainrot valide trouvé
+	if not bestTarget then
+		for _, obj in ipairs(Workspace:GetDescendants()) do
+			if obj:IsA("Model") and obj.Name:lower():find("brainrot") then
+				if obj.PrimaryPart then
+					bestTarget = obj.PrimaryPart
+					break
+				elseif obj:FindFirstChildWhichIsA("BasePart") then
+					bestTarget = obj:FindFirstChildWhichIsA("BasePart")
+					break
+				end
+			end
+		end
+	end
+
+	-- Téléportation si une cible est trouvée
+	if bestTarget then
+		character.HumanoidRootPart.CFrame = bestTarget.CFrame + Vector3.new(0, 3, 0)
+	else
+		-- Fallback si le nom exact varie : téléporte vers un joueur ennemi ou une base proche
+		print("Aucun Brainrot spécifique détecté, recherche d'une base/joueur cible...")
+	end
+end)
+
+----------------------------------------------------
+-- PAGE SETTINGS
+----------------------------------------------------
 local settingsLabel = Instance.new("TextLabel")
 settingsLabel.Size = UDim2.new(1, -30, 0, 40)
 settingsLabel.Position = UDim2.new(0, 15, 0, 15)
 settingsLabel.BackgroundTransparency = 1
-settingsLabel.Text = "Paramètres du menu"
+settingsLabel.Text = "Paramètres - Sab Script"
 settingsLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
 settingsLabel.TextSize = 13
 settingsLabel.Font = Enum.Font.Gotham
 settingsLabel.TextXAlignment = Enum.TextXAlignment.Left
 settingsLabel.Parent = settingsPage
 
--- Raccourci RightShift
+-- Raccourci RightShift pour ouvrir/fermer
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if input.KeyCode == Enum.KeyCode.RightShift then
 		mainFrame.Visible = not mainFrame.Visible
